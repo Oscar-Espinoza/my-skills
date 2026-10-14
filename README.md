@@ -1,4 +1,4 @@
-# agent-skills
+# my-skills
 
 Oscar's own agent skills for Claude Code and Codex, in one place so they can be installed into any project or
 machine. Each skill is a folder under `skills/` with a `SKILL.md` (frontmatter `name` and `description`) and
@@ -28,7 +28,9 @@ Third-party skills Oscar uses are not copied here; see `external-skills.md` for 
 - `--agent claude|codex|both` (default both). Claude Code reads `.claude/skills/` (project) and `~/.claude/skills/`
   (user). Codex reads `.agents/skills/` (project) and, on this machine, `~/.codex/skills/` (user).
 - Machine-bound skills are skipped unless named or `--all` is passed.
-- Existing skills are never overwritten unless `--force`, which moves the old folder to `<name>.bak-<timestamp>`.
+- Existing skills are never overwritten unless `--force`, which first moves the old folder to
+  `~/.local/state/extension-cleanup/my-skills-<timestamp>/` (outside any skills directory, so it never loads as a
+  duplicate; override with `MY_SKILLS_BACKUP_DIR`).
 - Copy (default) when the project should own its copy, e.g. to commit it into that repo. Use `--link` for your own
   profile so there is one source of truth.
 

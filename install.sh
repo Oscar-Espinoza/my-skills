@@ -10,7 +10,8 @@
 #   --project DIR | --user   where to install (one is required unless --list)
 #   --agent claude|codex|both   default both. claude: .claude/skills; codex: .agents/skills (project) or ~/.codex/skills (user)
 #   --link     symlink instead of copy (keeps one source of truth; the repo must stay where it is)
-#   --force    replace an existing skill directory of the same name (it is moved to a .bak-<timestamp> first)
+#   --force    replace an existing skill of the same name; the old one is moved to $BACKUP_ROOT/<timestamp>/ first,
+#              outside every skills directory so it is never loaded as a duplicate skill
 #   --all      include machine-bound skills (see MACHINE_BOUND below) when no skill names are given
 #   --dry-run  print what would happen
 set -euo pipefail
@@ -19,6 +20,8 @@ REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILLS_DIR="$REPO/skills"
 # Skills that only work on Oscar's machine setup (herdr, ~/.local/state/herd, codex CLI + Mobbin MCP).
 MACHINE_BOUND=(herd herd-side directions)
+BACKUP_ROOT="${MY_SKILLS_BACKUP_DIR:-$HOME/.local/state/extension-cleanup}"
+STAMP="my-skills-$(date +%Y%m%d-%H%M%S)"
 
 target="" agent="both" mode="copy" force=0 all=0 dry=0 names=()
 while [[ $# -gt 0 ]]; do
@@ -36,7 +39,7 @@ while [[ $# -gt 0 ]]; do
         tag=""; for m in "${MACHINE_BOUND[@]}"; do [[ "$m" == "$n" ]] && tag=" [machine-bound]"; done
         printf '%-16s%s %s\n' "$n" "$tag" "$desc"
       done; exit 0 ;;
-    -h|--help) sed -n '2,17p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,18p' "$0"; exit 0 ;;
     -*) echo "unknown option $1" >&2; exit 2 ;;
     *) names+=("$1"); shift ;;
   esac
@@ -72,7 +75,8 @@ for n in "${names[@]}"; do
     if [[ -e "$out" || -L "$out" ]]; then
       if [[ -L "$out" && "$(readlink -f "$out")" == "$(readlink -f "$src")" ]]; then echo "ok    $out (already linked)"; continue; fi
       if [[ $force -eq 0 ]]; then echo "skip  $out exists (use --force to replace; a backup is kept)"; continue; fi
-      run mv "$out" "$out.bak-$(date +%Y%m%d%H%M%S)"
+      bak="$BACKUP_ROOT/$STAMP/$(echo "$dest" | sed "s|^$HOME/||; s|/|_|g")"
+      run mkdir -p "$bak"; run mv "$out" "$bak/$n"; echo "backup $out -> $bak/$n"
     fi
     if [[ "$mode" == "link" ]]; then run ln -s "$src" "$out"; else run cp -r "$src" "$out"; fi
     echo "$mode  $n -> $out"
