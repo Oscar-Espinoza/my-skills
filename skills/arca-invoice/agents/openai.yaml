@@ -1,0 +1,4 @@
+interface:
+  display_name: "ARCA Monthly Invoice"
+  short_description: "Create monthly export invoices through ARCA"
+  default_prompt: "Use $arca-invoice to create Go Nimbly’s invoice for the requested service month, checking ARCA for duplicates first."
