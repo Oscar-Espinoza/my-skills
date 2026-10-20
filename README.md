@@ -9,6 +9,7 @@ optional `references/`, `scripts/` and `agents/` files.
 | `spec-sizing` | Size and split spec/epic tickets against the real code before building (hidden-work checklist, split rules, cross-model review, `apply_splits.py` / `ticket_graph.py`). | yes |
 | `agent-routing` | Choose model, agent type and effort per piece of delegated work, and how to brief it (`findings.md` is the evidence log). | yes (model names are current as of 2026-10) |
 | `agent-context` | Audit and streamline AGENTS.md / CLAUDE.md and their referenced context files. | yes |
+| `social-login` | Implement sign in with Google/GitHub/other OAuth providers with account linking: owner decisions, linking and takeover rules, flow security, provider gotchas, fake-provider tests, setup and review checklists (`references/evidence.md` traces each rule). | yes |
 | `arca-invoice` | Create Oscar's monthly Go Nimbly Factura E through ARCA, using the current private billing records and checking for duplicates. | yes; needs private invoicing records and browser access |
 | `herd` | Coordinate worker agents in herdr tabs. | needs `herdr` and `herd-spawn` |
 | `herd-side` | Side-project mode for herd: cheaper routing, types as the gate. | needs `herd` |
