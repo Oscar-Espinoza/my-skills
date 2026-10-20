@@ -47,6 +47,8 @@ def main():
 
     raw = json.load(open(a.tracker))
     feats = raw if isinstance(raw, list) else raw[a.list_key]
+    for f in feats:
+        f.setdefault("deps", [])
     spec = json.load(open(a.splits))
     gate_re = re.compile(a.gate_regex) if a.gate_regex else None
     byid = {f["id"]: f for f in feats}
@@ -75,10 +77,10 @@ def main():
         seen, subs = {}, []
         for s in sp["subs"]:
             lines = list(s["acceptance"])
-            if gate and gate[0] not in lines:
-                lines.append(gate[0])
             if lines != sorted(lines):
                 errors.append(f"{s['id']}: acceptance not in original order {lines}")
+            if gate and gate[0] not in lines:
+                lines = sorted(lines + [gate[0]])
             for i in lines:
                 if not 1 <= i <= n:
                     errors.append(f"{s['id']}: line {i} out of range 1..{n}")

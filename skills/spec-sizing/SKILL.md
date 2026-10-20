@@ -54,6 +54,9 @@ separating something from its only consumer; record that reason.
 ### 3. Write the sub-tickets
 Follow the tracker's existing shape (copy an existing split entry's fields). For each sub-ticket:
 - **Id**: original prefix + `-A`, `-B`, … (if `-A` is taken by an existing sibling, start at the next free letter).
+  Check the project's id pattern first: tooling often derives task/DB/migration names from it. In ecommerce-builder it
+  is `Fnn-nn(-X)?`, with one letter. Splitting an already-lettered ticket (`F23-12-A`) must use free single letters of its
+  parent (`F23-12-D`, `-E`, …), never `F23-12-A-A`. Dry-run the start script on every new id.
 - **Description**: the original description unchanged, plus a `SPLIT (<date>): …` note with the slice's scope, the
   files/patterns it owns, defaults it takes, and a pointer to the sizing evidence.
 - **Acceptance**: redistribute the original lines **unchanged**, in order. The final "checks/gate pass" line goes on

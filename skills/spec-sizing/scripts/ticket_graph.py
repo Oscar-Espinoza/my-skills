@@ -20,6 +20,8 @@ def main():
     a = ap.parse_args()
     raw = json.load(open(a.tracker))
     feats = raw if isinstance(raw, list) else raw[a.list_key]
+    for f in feats:
+        f.setdefault("deps", [])
     byid = {f["id"]: f for f in feats}
     open_st = set(a.open.split(","))
     sel = [f["id"] for f in feats if f.get("status") in open_st
