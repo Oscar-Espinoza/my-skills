@@ -21,7 +21,7 @@ results there outrank vendor claims.
 | Mechanical wiring, data loading, routes, straightforward tests | `sonnet-mid` or Opus at low | — |
 | Read-only search or exploration | the Explore agent | — |
 | Code review | Codex (`codex-review`), never the agent that wrote the code | — |
-| Judging screenshots (the look) | `fable-high` critic | — |
+| Judging screenshots (the look) | `opus-medium` (Opus 5.5) critic | — |
 
 Where your task template allows per-piece choices, escalate after 2 failed rounds on the same piece: Sonnet → Opus, or medium → high. A better agent fixes repeated
 misses; a longer brief rarely does. When an agent keeps missing a rule (the same kind of finding comes back), make Codex
@@ -31,6 +31,22 @@ as the full scope, Sonnet most of all. (Evidence: F21-03, 2026-10-12.)
 
 Avoid xhigh and max unless a measured gain justifies them. At max, testers saw scope creep, self-started reviewer
 fan-out, and one run that returned nothing after 20 minutes.
+
+**Job shape: Opus plans, fresh Sonnet builders build one piece each.** Never hand one Sonnet agent an open-ended or
+multi-piece job (choosing the direction plus many sections plus verifying). A Sonnet agent that runs long means the
+piece is too big. The pattern:
+1. An Opus planner (medium; high only for flagship taste work) makes the decisions and writes a plan file. For design
+   that means the direction, the tokens, and one complete spec per piece (files, layout per breakpoint, states, copy,
+   data).
+2. An executor walks the plan. Prefer a deterministic workflow script; use an Opus-medium agent only when steps need
+   judgment. Per piece it starts a fresh `sonnet-high` builder with only that piece's spec, then a fresh visual
+   critic (`opus-medium`, screenshots only, not the code).
+3. Codex (`gpt-6.1-sol`, high) reviews the code, batched per flow.
+4. When the critic fails a piece twice, rebuild it with Opus.
+5. Builders write files; one step publishes, so parallel builders never race on a shared artifact.
+
+(Oscar, 2026-10-15, after a single sonnet-high agent was given the whole shopping canvas. Same pattern as F21-02, which
+worked.)
 
 ## 2. Brief for the model you picked
 
